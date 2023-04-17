@@ -342,11 +342,56 @@ regExp.test(target);	// true
 
 
 
-#### 자주 사용하는 정규표현식 (p.589)
+### **프로젝트에서 사용한 코드**
 
-**1. 특정 단어로 시작하는지 검사**
+```jsx
+// 정규표현식을 사용하여 언급한 사람들 추출
 
+const handleUpdateComment = async () => {
+    const mentionNickname = null;
+    const mentionRegex = /@[^\\s@]+/g;
+    const mentionNicknameList = content.match(mentionRegex) || []; // 언급할 대상들
+};
+// 문자열을 화면에 표시할 때 정규표현식을 이용해 "@" 부분을 다 멘션으로 처리해서 하이라이팅 + 링크 기능 추가
 
+<div className={`${styles.introduction} `}>
+    {content.split(/(@[^\\s@]+)/g).map((v: string, index: number) => {
+        if (v.match(/@[^\\s@]+/g)) {
+            return (
+                <span key={index}>
+                    <Link href={`/user/feed/${v.substring(1)}`}>
+                        {v}
+                    </Link>
+                </span>
+            );
+        }
+        return (
+            <span key={index}>
+                {v}
+            </span>
+        );
+    })}
+</div>
+// 멘션 적용
+useEffect(() => {
+	const lastAtSignIndex = content.lastIndexOf('@');
+	if (lastAtSignIndex !== -1 && content.length > lastAtSignIndex + 1) {
+		const nickname = content.slice(lastAtSignIndex + 1);
+		getUserList(nickname).then((res) => {
+			setValue('userList', res.data);
+		});
+	} else {
+		setValue('userList', []);
+	}
+}, [content]);
+
+// 멘션 추출하기
+const handleUserSelect = (user: { nickname: string }) => {
+	const lastAtSignIndex = content.lastIndexOf('@');
+	setValue('content', content.slice(0, lastAtSignIndex) + `@${user.nickname} `);
+	setValue('userList', []);
+};
+```
 
 
 
